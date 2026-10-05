@@ -2,13 +2,11 @@ import { useState } from "react";
 import { PillButton, TextField, SectionEyebrow, ThemeToggle } from "./Theme";
 import { API } from "./services/api";
 
-const ADMIN_CREDENTIALS = { email: "admin@gmail.com", password: "admin123" };
-
 // Pure Login Portal Component (Connects to /api/auth/login)
 export default function AuthPage({ onLogin, onBack, theme, toggleTheme }) {
     const [role, setRole] = useState("admin");
-    const [email, setEmail] = useState(ADMIN_CREDENTIALS.email);
-    const [password, setPassword] = useState(ADMIN_CREDENTIALS.password);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -21,14 +19,8 @@ export default function AuthPage({ onLogin, onBack, theme, toggleTheme }) {
     const selectRole = (newRole) => {
         setRole(newRole);
         setError("");
-        if (newRole === "admin") {
-            setEmail(ADMIN_CREDENTIALS.email);
-            setPassword(ADMIN_CREDENTIALS.password);
-        } else {
-            // No hardcoded credentials for mentor or intern: they are registered by the admin
-            setEmail("");
-            setPassword("");
-        }
+        setEmail("");
+        setPassword("");
     };
 
     const submit = async (e) => {
