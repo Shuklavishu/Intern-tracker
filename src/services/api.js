@@ -1,6 +1,7 @@
 // Frontend API Service Layer connecting to Express & MongoDB Backend
 
-const BASE_URL = import.meta.env.VITE_API_URL || "/api";
+const rawUrl = (import.meta.env.VITE_API_URL || "/api").trim().replace(/\/+$/, "");
+const BASE_URL = rawUrl.endsWith("/api") ? rawUrl : `${rawUrl}/api`;
 
 class ApiService {
     getToken() {
