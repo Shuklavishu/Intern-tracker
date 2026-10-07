@@ -85,9 +85,8 @@ export default function AuthPage({ onLogin, onBack, theme, toggleTheme }) {
                                         key={r.id}
                                         type="button"
                                         onClick={() => selectRole(r.id)}
-                                        className={`btn btn-sm rounded-pill px-3 ${
-                                            role === r.id ? "btn-violet" : "btn-ghost-pill"
-                                        }`}
+                                        className={`btn btn-sm rounded-pill px-3 ${role === r.id ? "btn-violet" : "btn-ghost-pill"
+                                            }`}
                                     >
                                         {r.label}
                                     </button>
@@ -95,19 +94,15 @@ export default function AuthPage({ onLogin, onBack, theme, toggleTheme }) {
                             </div>
                         </div>
 
-                        {role !== "admin" && (
-                            <div className="alert alert-info py-2 px-3 small rounded-3 mb-3 bg-info-subtle text-info border-info-subtle">
-                                <i className="bi bi-info-circle me-1"></i>
-                                {role === "mentor" ? "Mentor" : "Intern"} accounts are registered by the Admin. Sign in with your assigned credentials.
-                            </div>
-                        )}
+
+
 
                         {/* Login Form */}
                         <form onSubmit={submit}>
                             <TextField
                                 label="Email address"
                                 type="email"
-                                placeholder={role === "admin" ? "admin@gmail.com" : `${role}@company.com`}
+                                placeholder={`${role}@gmail.com`}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
