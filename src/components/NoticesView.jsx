@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PillButton, AudienceBadge } from "../Theme";
+import { PillButton, AudienceBadge, EmptyState } from "../Theme";
 import NoticeModal from "./NoticeModal";
 
 export default function NoticesView({
@@ -15,15 +15,15 @@ export default function NoticesView({
     const [showModal, setShowModal] = useState(false);
 
     return (
-        <div>
+        <div className="text-start">
             <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-                <div>
-                    <h2 className="font-display text-skywash m-0">{title}</h2>
-                    <div className="text-fog small">{subtitle}</div>
+                <div className="text-start">
+                    <h2 className="font-display h3 m-0" style={{ color: "var(--text-primary)" }}>{title}</h2>
+                    <div className="text-secondary small mt-1" style={{ maxWidth: "65ch" }}>{subtitle}</div>
                 </div>
                 {canBroadcast && (
                     <PillButton variant="filled" onClick={() => setShowModal(true)}>
-                        <i className="bi bi-megaphone me-2"></i> Issue Notice
+                        <i className="ph ph-megaphone-simple me-1.5"></i> Issue Notice
                     </PillButton>
                 )}
             </div>
@@ -42,16 +42,24 @@ export default function NoticesView({
                     <tbody>
                         {notices.map((n) => (
                             <tr key={n.id}>
-                                <td className="fw-bold text-frost">{n.id}</td>
-                                <td className="text-moon fw-medium">{n.title}</td>
+                                <td className="fw-semibold" style={{ color: "var(--text-primary)" }}>{n.id}</td>
+                                <td style={{ color: "var(--text-primary)" }}>{n.title}</td>
                                 <td><AudienceBadge audience={n.audience} /></td>
-                                <td className="text-frost">{n.createdBy}</td>
-                                <td className="text-fog small">{n.date}</td>
+                                <td style={{ color: "var(--text-primary)" }}>{n.createdBy}</td>
+                                <td className="text-secondary small">{n.date}</td>
                             </tr>
                         ))}
                         {notices.length === 0 && (
                             <tr>
-                                <td colSpan="5" className="text-center text-fog py-4">No notices broadcasted yet.</td>
+                                <td colSpan="5" className="p-4">
+                                    <EmptyState
+                                        icon="ph-megaphone-simple"
+                                        title="No broadcast notices"
+                                        description="Company-wide announcements and team updates will be listed here when published."
+                                        actionLabel={canBroadcast ? "Issue Notice" : undefined}
+                                        onAction={canBroadcast ? () => setShowModal(true) : undefined}
+                                    />
+                                </td>
                             </tr>
                         )}
                     </tbody>

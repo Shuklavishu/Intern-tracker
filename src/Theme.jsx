@@ -1,18 +1,18 @@
 import { grade } from "./utils/helpers";
 
-// ---------- AuthKit Shared Components ----------
+// ---------- Clean Editorial Shared Components ----------
 
 export function PillButton({ children, onClick, variant = "filled", type = "button", style, className = "" }) {
     const btnClasses = {
-        filled: "btn btn-violet rounded-pill px-4 py-2 fw-medium",
-        ghost: "btn btn-ghost-pill rounded-pill px-4 py-2 fw-medium",
-        danger: "btn btn-outline-danger rounded-pill px-4 py-2 border-opacity-50",
+        filled: "btn btn-primary-accent",
+        ghost: "btn btn-secondary-flat",
+        danger: "btn btn-outline-danger",
     };
     return (
         <button
             type={type}
             onClick={onClick}
-            className={`${btnClasses[variant] || "btn btn-violet rounded-pill px-4 py-2 fw-medium"} ${className}`}
+            className={`${btnClasses[variant] || "btn btn-primary-accent"} ${className}`}
             style={style}
         >
             {children}
@@ -20,18 +20,18 @@ export function PillButton({ children, onClick, variant = "filled", type = "butt
     );
 }
 
-export function Avatar({ initials, size = 40, bg = "rgba(224, 86, 38, 0.25)", fg = "#d8ecf8" }) {
+export function Avatar({ initials, size = 36, bg = "rgba(37, 99, 235, 0.12)", fg = "var(--text-primary)" }) {
     return (
         <div
-            className="rounded-circle d-flex align-items-center justify-content-center fw-semibold flex-shrink-0"
+            className="d-flex align-items-center justify-content-center fw-semibold flex-shrink-0"
             style={{
                 width: size,
                 height: size,
                 backgroundColor: bg,
                 color: fg,
                 fontSize: size * 0.38,
-                border: "1px solid rgba(186, 215, 247, 0.2)",
-                boxShadow: "0 0 12px rgba(224, 86, 38, 0.2)"
+                borderRadius: "var(--radius)",
+                border: "1px solid var(--border-color)",
             }}
         >
             {initials}
@@ -45,56 +45,45 @@ export function GradeChip({ score }) {
     const g = grade(score);
     const numScore = Number(score) || 0;
 
-    let style = {
-        color: "#10b981",
-        backgroundColor: "rgba(16, 185, 129, 0.16)",
-        border: "1px solid rgba(16, 185, 129, 0.35)",
-        boxShadow: "0 0 8px rgba(16, 185, 129, 0.2)"
-    };
+    let style;
 
     if (numScore >= 9.0) {
-        // Emerald Glow
         style = {
-            color: "#34d399",
-            backgroundColor: "rgba(16, 185, 129, 0.18)",
-            border: "1px solid rgba(52, 211, 153, 0.4)",
-            boxShadow: "0 0 10px rgba(52, 211, 153, 0.25)"
+            color: "#10b981",
+            backgroundColor: "rgba(16, 185, 129, 0.12)",
+            border: "1px solid rgba(16, 185, 129, 0.28)",
         };
     } else if (numScore >= 8.0) {
-        // Neon Cyan / Blue
         style = {
-            color: "#38bdf8",
-            backgroundColor: "rgba(56, 189, 248, 0.16)",
-            border: "1px solid rgba(56, 189, 248, 0.35)",
-            boxShadow: "0 0 8px rgba(56, 189, 248, 0.2)"
+            color: "#0284c7",
+            backgroundColor: "rgba(2, 132, 199, 0.12)",
+            border: "1px solid rgba(2, 132, 199, 0.28)",
         };
     } else if (numScore >= 6.5) {
-        // Amber Gold
         style = {
-            color: "#fbbf24",
-            backgroundColor: "rgba(245, 158, 11, 0.16)",
-            border: "1px solid rgba(245, 158, 11, 0.35)",
-            boxShadow: "0 0 8px rgba(245, 158, 11, 0.2)"
+            color: "#d97706",
+            backgroundColor: "rgba(217, 119, 6, 0.12)",
+            border: "1px solid rgba(217, 119, 6, 0.28)",
         };
     } else {
-        // Rose Crimson
         style = {
-            color: "#f87171",
-            backgroundColor: "rgba(239, 68, 68, 0.16)",
-            border: "1px solid rgba(239, 68, 68, 0.35)",
-            boxShadow: "0 0 8px rgba(239, 68, 68, 0.2)"
+            color: "#ef4444",
+            backgroundColor: "rgba(239, 68, 68, 0.12)",
+            border: "1px solid rgba(239, 68, 68, 0.28)",
         };
     }
 
     return (
         <div className="d-inline-flex align-items-center gap-2">
             <span
-                className="badge rounded-2 px-2.5 py-1 fs-6 fw-bold transition-all"
-                style={style}
+                className="badge px-2 py-1 fw-bold"
+                style={{ ...style, borderRadius: "var(--radius)" }}
             >
                 {g}
             </span>
-            <span className="text-frost fw-semibold small">{numScore.toFixed(1)} <span className="text-fog extra-small font-normal">/ 10</span></span>
+            <span className="fw-medium small" style={{ color: "var(--text-primary)" }}>
+                {numScore.toFixed(1)} <span className="text-secondary small">/ 10</span>
+            </span>
         </div>
     );
 }
@@ -102,15 +91,16 @@ export function GradeChip({ score }) {
 export function Tag({ children }) {
     return (
         <span
-            className="badge rounded-pill px-3 py-1.5 fw-medium d-inline-flex align-items-center gap-1"
+            className="badge px-2.5 py-1 fw-medium d-inline-flex align-items-center gap-1.5"
             style={{
-                color: "#60a5fa", // Sapphire Blue
-                backgroundColor: "rgba(96, 165, 250, 0.14)",
-                border: "1px solid rgba(96, 165, 250, 0.3)",
-                fontSize: "0.78rem"
+                color: "var(--accent)",
+                backgroundColor: "var(--accent-subtle)",
+                border: "1px solid var(--accent-border)",
+                fontSize: "var(--text-xs)",
+                borderRadius: "var(--radius)",
             }}
         >
-            <i className="bi bi-building me-1 opacity-75"></i>
+            <i className="ph ph-buildings"></i>
             {children}
         </span>
     );
@@ -119,15 +109,16 @@ export function Tag({ children }) {
 export function MentorBadge({ name }) {
     return (
         <span
-            className="badge rounded-pill px-3 py-1.5 fw-medium d-inline-flex align-items-center gap-1"
+            className="badge px-2.5 py-1 fw-medium d-inline-flex align-items-center gap-1.5"
             style={{
-                color: "#c084fc", // Amethyst Purple
-                backgroundColor: "rgba(192, 132, 252, 0.14)",
-                border: "1px solid rgba(192, 132, 252, 0.3)",
-                fontSize: "0.78rem"
+                color: "var(--text-secondary)",
+                backgroundColor: "var(--bg-surface-elevated)",
+                border: "1px solid var(--border-color)",
+                fontSize: "var(--text-xs)",
+                borderRadius: "var(--radius)",
             }}
         >
-            <i className="bi bi-person-badge me-1 opacity-75"></i>
+            <i className="ph ph-identification-badge"></i>
             {name || "Unassigned"}
         </span>
     );
@@ -136,32 +127,55 @@ export function MentorBadge({ name }) {
 export function AudienceBadge({ audience }) {
     return (
         <span
-            className="badge rounded-pill px-3 py-1.5 fw-medium d-inline-flex align-items-center gap-1"
+            className="badge px-2.5 py-1 fw-medium d-inline-flex align-items-center gap-1.5"
             style={{
-                color: "#e879f9", // Fuchsia Pink
-                backgroundColor: "rgba(232, 121, 249, 0.14)",
-                border: "1px solid rgba(232, 121, 249, 0.3)",
-                fontSize: "0.78rem"
+                color: "var(--accent)",
+                backgroundColor: "var(--accent-subtle)",
+                border: "1px solid var(--accent-border)",
+                fontSize: "var(--text-xs)",
+                borderRadius: "var(--radius)",
             }}
         >
-            <i className="bi bi-megaphone me-1 opacity-75"></i>
+            <i className="ph ph-megaphone-simple"></i>
             {audience}
         </span>
     );
 }
 
 export function RequestTypeBadge({ type }) {
+    const t = (type || "").toLowerCase();
+    const isWfh = t.includes("wfh") || t.includes("remote") || t.includes("home");
+    const isGoalExt = t.includes("goal") || t.includes("extension");
+
+    let icon = "ph-calendar";
+    let color = "var(--accent)";
+    let bg = "var(--accent-subtle)";
+    let border = "var(--accent-border)";
+
+    if (isGoalExt) {
+        icon = "ph-clock-countdown";
+        color = "#d97706";
+        bg = "rgba(217, 119, 6, 0.1)";
+        border = "rgba(217, 119, 6, 0.25)";
+    } else if (isWfh) {
+        icon = "ph-house-line";
+        color = "#0284c7";
+        bg = "rgba(2, 132, 199, 0.1)";
+        border = "rgba(2, 132, 199, 0.25)";
+    }
+
     return (
         <span
-            className="badge rounded-pill px-3 py-1.5 fw-medium d-inline-flex align-items-center gap-1"
+            className="badge px-2.5 py-1 fw-medium d-inline-flex align-items-center gap-1.5"
             style={{
-                color: "#22d3ee", // Cyan Aquamarine
-                backgroundColor: "rgba(34, 211, 238, 0.14)",
-                border: "1px solid rgba(34, 211, 238, 0.3)",
-                fontSize: "0.78rem"
+                color,
+                backgroundColor: bg,
+                border: `1px solid ${border}`,
+                fontSize: "var(--text-xs)",
+                borderRadius: "var(--radius)",
             }}
         >
-            <i className="bi bi-file-earmark-text me-1 opacity-75"></i>
+            <i className={`ph ${icon}`}></i>
             {type}
         </span>
     );
@@ -169,22 +183,30 @@ export function RequestTypeBadge({ type }) {
 
 export function RoleBadge({ role }) {
     const r = (role || "").toLowerCase();
-    let style = { color: "#38bdf8", bg: "rgba(56, 189, 248, 0.14)", border: "rgba(56, 189, 248, 0.3)" };
+    let color = "var(--accent)";
+    let bg = "var(--accent-subtle)";
+    let border = "var(--accent-border)";
+
     if (r.includes("admin")) {
-        style = { color: "#f97316", bg: "rgba(249, 115, 22, 0.14)", border: "rgba(249, 115, 22, 0.3)" };
+        color = "#d97706";
+        bg = "rgba(217, 119, 6, 0.1)";
+        border = "rgba(217, 119, 6, 0.25)";
     } else if (r.includes("mentor")) {
-        style = { color: "#c084fc", bg: "rgba(192, 132, 252, 0.14)", border: "rgba(192, 132, 252, 0.3)" };
+        color = "#0284c7";
+        bg = "rgba(2, 132, 199, 0.1)";
+        border = "rgba(2, 132, 199, 0.25)";
     }
 
     return (
         <span
-            className="badge rounded-pill px-3 py-1.5 fw-semibold uppercase"
+            className="badge px-2.5 py-1 fw-medium text-uppercase"
             style={{
-                color: style.color,
-                backgroundColor: style.bg,
-                border: `1px solid ${style.border}`,
-                fontSize: "0.75rem",
-                letterSpacing: "0.5px"
+                color,
+                backgroundColor: bg,
+                border: `1px solid ${border}`,
+                fontSize: "var(--text-xs)",
+                letterSpacing: "0.05em",
+                borderRadius: "var(--radius)",
             }}
         >
             {role}
@@ -196,86 +218,106 @@ export function StatusLabel({ status }) {
     const s = (status || "").toLowerCase();
 
     let style = {
-        color: "#9da7ba",
-        bg: "rgba(157, 167, 186, 0.12)",
-        border: "rgba(157, 167, 186, 0.25)"
+        color: "var(--text-secondary)",
+        bg: "var(--bg-surface-elevated)",
+        border: "var(--border-color)",
     };
 
-    if (s === "active") {
-        style = { color: "#34d399", bg: "rgba(16, 185, 129, 0.14)", border: "rgba(52, 211, 153, 0.35)" };
-    } else if (s === "at risk") {
-        style = { color: "#fb7185", bg: "rgba(244, 63, 94, 0.16)", border: "rgba(251, 113, 133, 0.35)" };
-    } else if (s === "present") {
-        style = { color: "#2dd4bf", bg: "rgba(20, 184, 166, 0.14)", border: "rgba(45, 212, 191, 0.35)" };
-    } else if (s === "absent") {
-        style = { color: "#f87171", bg: "rgba(239, 68, 68, 0.16)", border: "rgba(248, 113, 113, 0.35)" };
-    } else if (s === "late") {
-        style = { color: "#fb923c", bg: "rgba(249, 115, 22, 0.14)", border: "rgba(251, 146, 60, 0.35)" };
-    } else if (s === "pending") {
-        style = { color: "#fde047", bg: "rgba(234, 179, 8, 0.14)", border: "rgba(253, 224, 71, 0.35)" };
-    } else if (s === "approved" || s === "completed") {
-        style = { color: "#4ade80", bg: "rgba(34, 197, 94, 0.14)", border: "rgba(74, 222, 128, 0.35)" };
-    } else if (s === "rejected") {
-        style = { color: "#fda4af", bg: "rgba(225, 29, 72, 0.16)", border: "rgba(253, 164, 175, 0.35)" };
-    } else if (s === "in progress") {
-        style = { color: "#38bdf8", bg: "rgba(56, 189, 248, 0.14)", border: "rgba(56, 189, 248, 0.35)" };
-    } else if (s === "needs review") {
-        style = { color: "#f59e0b", bg: "rgba(245, 158, 11, 0.14)", border: "rgba(245, 158, 11, 0.35)" };
+    if (s === "active" || s === "present" || s === "approved") {
+        style = { color: "#10b981", bg: "rgba(16, 185, 129, 0.1)", border: "rgba(16, 185, 129, 0.25)" };
+    } else if (s === "on leave" || s === "late" || s === "pending" || s === "needs review") {
+        style = { color: "#d97706", bg: "rgba(217, 119, 6, 0.1)", border: "rgba(217, 119, 6, 0.25)" };
+    } else if (s === "completed" || s === "in progress" || s === "submitted") {
+        style = { color: "var(--accent)", bg: "var(--accent-subtle)", border: "var(--accent-border)" };
+    } else if (s === "terminated" || s === "absent" || s === "at risk" || s === "rejected" || s === "denied") {
+        style = { color: "#ef4444", bg: "rgba(239, 68, 68, 0.1)", border: "rgba(239, 68, 68, 0.25)" };
     }
 
     return (
         <span
-            className="badge rounded-2 px-3 py-1.5 fw-medium d-inline-flex align-items-center gap-1.5"
+            className="badge px-2.5 py-1 fw-medium d-inline-flex align-items-center gap-1.5"
             style={{
                 color: style.color,
                 backgroundColor: style.bg,
                 border: `1px solid ${style.border}`,
-                fontSize: "0.78rem"
+                fontSize: "var(--text-xs)",
+                borderRadius: "var(--radius)",
             }}
         >
-            <span className="d-inline-block rounded-circle" style={{ width: 6, height: 6, backgroundColor: style.color }}></span>
+            <span
+                className="d-inline-block"
+                style={{
+                    width: 6,
+                    height: 6,
+                    backgroundColor: style.color,
+                    borderRadius: "2px",
+                }}
+            ></span>
             {status}
+        </span>
+    );
+}
+
+export function AtRiskBadge() {
+    return (
+        <span
+            className="badge px-2 py-1 fw-medium d-inline-flex align-items-center gap-1"
+            style={{
+                color: "#ef4444",
+                backgroundColor: "rgba(239, 68, 68, 0.1)",
+                border: "1px solid rgba(239, 68, 68, 0.25)",
+                fontSize: "var(--text-xs)",
+                borderRadius: "var(--radius)",
+            }}
+            title="At Risk: Performance Score < 6.0"
+        >
+            <i className="ph ph-warning"></i> At Risk
         </span>
     );
 }
 
 export function Card({ children, style, accent = false, className = "" }) {
     return (
-        <div className={`glass-card p-4 ${accent ? "border-warning" : ""} ${className}`} style={style}>
+        <div
+            className={`glass-card p-4 ${accent ? "border-primary" : ""} ${className}`}
+            style={{ ...style, borderRadius: "var(--radius)" }}
+        >
             {children}
         </div>
     );
 }
 
-
-
+// Clean typographic eyebrow with no divider lines
 export function SectionEyebrow({ children }) {
     return (
-        <div className="eyebrow-divider mb-3">
-            <div className="eyebrow-line"></div>
+        <div className="mb-2">
             <span className="font-eyebrow">{children}</span>
-            <div className="eyebrow-line"></div>
         </div>
     );
 }
 
+// Left-aligned section heading, no gradient text, constrained line length
 export function SectionHeading({ tag, title, sub, isMobile }) {
     return (
-        <div className={`text-center ${isMobile ? "mb-4" : "mb-5"}`}>
+        <div className={`text-start ${isMobile ? "mb-3" : "mb-4"}`}>
             {tag && <SectionEyebrow>{tag}</SectionEyebrow>}
-            <h1 className={`font-display ${isMobile ? "display-6" : "display-4"} text-skywash my-2`}>
+            <h1 className={`font-display ${isMobile ? "h2" : "h1"} mb-2`}>
                 {title}
             </h1>
-            {sub && <p className="text-moon lead fs-6 mx-auto mb-0" style={{ maxWidth: 600 }}>{sub}</p>}
+            {sub && (
+                <p className="text-secondary mb-0" style={{ maxWidth: "65ch", fontSize: "var(--text-base)" }}>
+                    {sub}
+                </p>
+            )}
         </div>
     );
 }
 
 export function StatCard({ label, value }) {
     return (
-        <div className="glass-card p-3 h-100 text-start">
-            <div className="text-fog small mb-1">{label}</div>
-            <div className="fs-3 fw-bold text-skywash">{value}</div>
+        <div className="glass-card p-3 h-100 text-start" style={{ borderRadius: "var(--radius)" }}>
+            <div className="text-secondary small mb-1">{label}</div>
+            <div className="fs-3 fw-bold font-display" style={{ color: "var(--text-primary)" }}>{value}</div>
         </div>
     );
 }
@@ -283,7 +325,7 @@ export function StatCard({ label, value }) {
 export function TextField({ label, ...props }) {
     return (
         <div className="mb-3 text-start">
-            {label && <label className="form-label text-moon small fw-medium mb-1">{label}</label>}
+            {label && <label className="form-label text-secondary small fw-medium mb-1">{label}</label>}
             <input className="form-control glass-input py-2 px-3" {...props} />
         </div>
     );
@@ -295,18 +337,36 @@ export function ThemeToggle({ theme, toggleTheme, className = "" }) {
         <button
             type="button"
             onClick={toggleTheme}
-            className={`btn btn-ghost-pill d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm transition-all ${className}`}
+            className={`btn btn-secondary-flat d-inline-flex align-items-center justify-content-center ${className}`}
             style={{
-                width: 38,
-                height: 38,
+                width: 36,
+                height: 36,
                 padding: 0,
                 cursor: "pointer",
-                userSelect: "none"
+                borderRadius: "var(--radius)",
             }}
             title={`Switch to ${isDark ? "Light" : "Dark"} mode`}
             aria-label={`Switch to ${isDark ? "Light" : "Dark"} mode`}
         >
-            <i className={`bi ${isDark ? "bi-sun-fill text-warning" : "bi-moon-stars-fill text-info"} fs-5`}></i>
+            <i className={`ph ${isDark ? "ph-sun" : "ph-moon"} fs-5`}></i>
         </button>
+    );
+}
+
+// Reusable editorial EmptyState component
+export function EmptyState({ icon = "ph-folder-open", title = "No records found", description = "There are no entries to display in this view yet.", actionLabel, onAction }) {
+    return (
+        <div className="empty-state-card text-start my-3">
+            <div className="empty-state-icon">
+                <i className={`ph ${icon}`}></i>
+            </div>
+            <div className="empty-state-title">{title}</div>
+            <p className="empty-state-desc">{description}</p>
+            {actionLabel && onAction && (
+                <button type="button" onClick={onAction} className="btn btn-primary-accent btn-sm">
+                    {actionLabel}
+                </button>
+            )}
+        </div>
     );
 }

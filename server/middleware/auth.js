@@ -14,7 +14,7 @@ export const verifyToken = (req, res, next) => {
         const decoded = jwt.verify(token, JWT_SECRET);
         req.user = decoded;
         next();
-    } catch (err) {
+    } catch {
         return res.status(400).json({ message: "Invalid or expired token." });
     }
 };
@@ -27,6 +27,22 @@ export const isAdmin = (req, res, next) => {
     next();
 };
 
+// Middleware to restrict access to Mentors only
+export const isMentor = (req, res, next) => {
+    if (req.user?.role !== "mentor") {
+        return res.status(403).json({ message: "Access denied. Mentor role required." });
+    }
+    next();
+};
+
+// Middleware to restrict access to Interns only
+export const isIntern = (req, res, next) => {
+    if (req.user?.role !== "intern") {
+        return res.status(403).json({ message: "Access denied. Intern role required." });
+    }
+    next();
+};
+
 // Middleware to restrict access to Admin or Mentor
 export const isAdminOrMentor = (req, res, next) => {
     if (req.user?.role !== "admin" && req.user?.role !== "mentor") {
@@ -34,3 +50,4 @@ export const isAdminOrMentor = (req, res, next) => {
     }
     next();
 };
+

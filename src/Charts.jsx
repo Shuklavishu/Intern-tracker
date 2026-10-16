@@ -1,7 +1,7 @@
 import { useState, memo } from "react";
 import { Card } from "./Theme";
 
-// ---------- Interactive Glow Line & Area Chart ----------
+// ---------- Interactive Performance Line & Area Chart ----------
 const DEFAULT_YEARLY_DATA = [
     { label: "Nov '25", score: 6.5, benchmark: 6.2, tasks: 10 },
     { label: "Dec '25", score: 6.8, benchmark: 6.5, tasks: 14 },
@@ -24,18 +24,16 @@ export const InteractivePerformanceChart = memo(function InteractivePerformanceC
 }) {
     const [timeframe, setTimeframe] = useState("3M");
     const [hoveredPoint, setHoveredPoint] = useState(null);
-    const [activeMetric, setActiveMetric] = useState("score"); // 'score' | 'tasks'
+    const [activeMetric, setActiveMetric] = useState("score");
 
-    // Filter data based on selected timeframe
     const rawData = dataPoints || DEFAULT_YEARLY_DATA;
     const activeDataPoints = (() => {
         if (timeframe === "1M") return rawData.slice(-2);
         if (timeframe === "3M") return rawData.slice(-Math.min(4, rawData.length));
         if (timeframe === "6M") return rawData.slice(-Math.min(6, rawData.length));
-        return rawData; // '1Y' or full dataset
+        return rawData;
     })();
 
-    // Compute max/min for scaling SVG
     const values = activeDataPoints.map((d) => d[activeMetric] ?? 0);
     const maxVal = values.length ? Math.max(...values, 10) : 10;
     const minVal = values.length ? Math.min(...values, 0) : 0;
@@ -63,7 +61,6 @@ export const InteractivePerformanceChart = memo(function InteractivePerformanceC
         return { x, y };
     });
 
-    // Build smooth Bezier path
     const buildBezierPath = (pts) => {
         if (!pts || pts.length === 0) return "";
         let path = `M ${pts[0].x} ${pts[0].y}`;
@@ -95,24 +92,24 @@ export const InteractivePerformanceChart = memo(function InteractivePerformanceC
     };
 
     return (
-        <Card className="p-4 mb-4 position-relative overflow-hidden" style={{ border: "1px solid rgba(186, 215, 247, 0.18)" }}>
+        <Card className="p-4 mb-4 position-relative overflow-hidden">
             {/* Header Control Panel */}
             <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
-                <div>
+                <div className="text-start">
                     <div className="d-flex align-items-center gap-2">
-                        <span className="p-2 rounded-3 d-inline-flex align-items-center justify-content-center" style={{ background: "rgba(224, 86, 38, 0.15)", color: "#e05626" }}>
-                            <i className="bi bi-graph-up-arrow fs-5"></i>
+                        <span className="p-2 d-inline-flex align-items-center justify-content-center" style={{ background: "var(--accent-subtle)", color: "var(--accent)", borderRadius: "var(--radius)" }}>
+                            <i className="ph ph-chart-line-up fs-5"></i>
                         </span>
                         <div>
-                            <h5 className="font-display text-skywash m-0 fs-5">{title}</h5>
-                            <div className="text-fog small">{subtitle} &middot; {getMetricLabel()}</div>
+                            <h5 className="font-display m-0 fs-5" style={{ color: "var(--text-primary)" }}>{title}</h5>
+                            <div className="text-secondary small">{subtitle} &middot; {getMetricLabel()}</div>
                         </div>
                     </div>
                 </div>
 
                 <div className="d-flex align-items-center gap-2 flex-wrap">
-                    {/* Metric Selector Pill */}
-                    <div className="d-inline-flex p-1 rounded-pill" style={{ background: "rgba(199, 211, 234, 0.06)", border: "1px solid rgba(186, 215, 247, 0.12)" }}>
+                    {/* Metric Selector */}
+                    <div className="d-inline-flex p-1" style={{ background: "var(--bg-surface-elevated)", border: "1px solid var(--border-color)", borderRadius: "var(--radius)" }}>
                         {[
                             { id: "score", label: "Score" },
                             { id: "tasks", label: "Tasks" },
@@ -120,26 +117,26 @@ export const InteractivePerformanceChart = memo(function InteractivePerformanceC
                             <button
                                 key={m.id}
                                 onClick={() => setActiveMetric(m.id)}
-                                className={`btn btn-sm rounded-pill px-3 py-1 extra-small fw-semibold transition-all ${
-                                    activeMetric === m.id ? "bg-violet text-white shadow-sm" : "text-moon border-0"
+                                className={`btn btn-sm px-2.5 py-1 extra-small fw-medium ${
+                                    activeMetric === m.id ? "btn-primary-accent text-white" : "btn-link text-secondary text-decoration-none"
                                 }`}
-                                style={activeMetric === m.id ? { backgroundColor: "#e05626" } : {}}
+                                style={{ borderRadius: "var(--radius)", fontSize: "12px" }}
                             >
                                 {m.label}
                             </button>
                         ))}
                     </div>
 
-                    {/* Timeframe Selector Pill */}
-                    <div className="d-inline-flex p-1 rounded-pill" style={{ background: "rgba(199, 211, 234, 0.06)", border: "1px solid rgba(186, 215, 247, 0.12)" }}>
+                    {/* Timeframe Selector */}
+                    <div className="d-inline-flex p-1" style={{ background: "var(--bg-surface-elevated)", border: "1px solid var(--border-color)", borderRadius: "var(--radius)" }}>
                         {["1M", "3M", "6M", "1Y"].map((tf) => (
                             <button
                                 key={tf}
                                 onClick={() => setTimeframe(tf)}
-                                className={`btn btn-sm rounded-pill px-2 py-1 extra-small fw-bold transition-all ${
-                                    timeframe === tf ? "text-white shadow-sm" : "text-fog border-0"
+                                className={`btn btn-sm px-2 py-1 extra-small fw-medium ${
+                                    timeframe === tf ? "btn-primary-accent text-white" : "btn-link text-secondary text-decoration-none"
                                 }`}
-                                style={timeframe === tf ? { background: "linear-gradient(135deg, #e05626, #f97316)" } : {}}
+                                style={{ borderRadius: "var(--radius)", fontSize: "12px" }}
                             >
                                 {tf}
                             </button>
@@ -149,95 +146,81 @@ export const InteractivePerformanceChart = memo(function InteractivePerformanceC
             </div>
 
             {/* Quick Metrics Bar */}
-            <div className="row g-2 mb-3 p-3 rounded-3" style={{ background: "rgba(186, 214, 247, 0.03)", border: "1px solid rgba(186, 215, 247, 0.08)" }}>
-                <div className="col-4 border-end border-secondary border-opacity-10 text-center">
-                    <div className="text-fog extra-small font-eyebrow">CURRENT SCORE</div>
-                    <div className="fs-5 fw-bold text-skywash">
+            <div className="row g-2 mb-3 p-2.5 p-sm-3 text-start" style={{ background: "var(--bg-surface-elevated)", border: "1px solid var(--border-color)", borderRadius: "var(--radius)" }}>
+                <div className="col-4 border-end border-secondary border-opacity-15">
+                    <div className="text-secondary small font-monospace text-truncate" style={{ fontSize: "10px" }}>CURRENT SCORE</div>
+                    <div className="fs-6 fs-sm-5 fw-bold font-display" style={{ color: "var(--text-primary)" }}>
                         {lastPt?.score ?? 8.9}{" "}
-                        <span className={`extra-small fw-normal ${scoreDiff >= 0 ? "text-success" : "text-danger"}`}>
-                            <i className={`bi bi-arrow-${scoreDiff >= 0 ? "up" : "down"}`}></i> {scoreDiff >= 0 ? `+${scoreDiff.toFixed(1)}` : scoreDiff.toFixed(1)} ({timeframe})
+                        <span className={`small fw-normal ${scoreDiff >= 0 ? "text-success" : "text-danger"}`}>
+                            <i className={`ph ph-arrow-${scoreDiff >= 0 ? "up" : "down"}`}></i> {scoreDiff >= 0 ? `+${scoreDiff.toFixed(1)}` : scoreDiff.toFixed(1)}
                         </span>
                     </div>
                 </div>
-                <div className="col-4 border-end border-secondary border-opacity-10 text-center">
-                    <div className="text-fog extra-small font-eyebrow">COHORT BENCHMARK</div>
-                    <div className="fs-5 fw-bold text-frost">{lastPt?.benchmark ?? 8.1} <span className="text-fog extra-small fw-normal">Avg</span></div>
+                <div className="col-4 border-end border-secondary border-opacity-15">
+                    <div className="text-secondary small font-monospace text-truncate" style={{ fontSize: "10px" }}>BENCHMARK</div>
+                    <div className="fs-6 fs-sm-5 fw-bold font-display" style={{ color: "var(--text-primary)" }}>
+                        {lastPt?.benchmark ?? 8.1} <span className="text-secondary small fw-normal d-none d-sm-inline">Avg</span>
+                    </div>
                 </div>
-                <div className="col-4 text-center">
-                    <div className="text-fog extra-small font-eyebrow">TARGET ACHIEVEMENT</div>
-                    <div className="fs-5 fw-bold text-warning">{lastPt?.tasks ?? 35} Tasks <span className="text-success extra-small fw-normal"><i className="bi bi-check-circle"></i> Completed</span></div>
+                <div className="col-4">
+                    <div className="text-secondary small font-monospace text-truncate" style={{ fontSize: "10px" }}>TASKS</div>
+                    <div className="fs-6 fs-sm-5 fw-bold font-display" style={{ color: "var(--text-primary)" }}>
+                        {lastPt?.tasks ?? 35} <span className="text-secondary small fw-normal d-none d-sm-inline">Done</span>
+                    </div>
                 </div>
             </div>
 
-            {/* SVG Interactive Chart */}
+            {/* SVG Chart */}
             <div className="position-relative w-100 my-2" style={{ height: svgHeight }}>
                 <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-100 h-100" preserveAspectRatio="none">
                     <defs>
-                        {/* Glow filter */}
-                        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                            <feGaussianBlur stdDeviation="4" result="blur" />
-                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                        </filter>
-
-                        {/* Gradient Fill */}
-                        <linearGradient id="neonGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#e05626" stopOpacity="0.45" />
-                            <stop offset="60%" stopColor="#e05626" stopOpacity="0.08" />
-                            <stop offset="100%" stopColor="#e05626" stopOpacity="0.0" />
-                        </linearGradient>
-
-                        <linearGradient id="benchmarkGrad" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.3" />
-                            <stop offset="100%" stopColor="#818cf8" stopOpacity="0.6" />
+                        <linearGradient id="singleAccentGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#2563eb" stopOpacity="0.25" />
+                            <stop offset="100%" stopColor="#2563eb" stopOpacity="0.0" />
                         </linearGradient>
                     </defs>
 
                     {/* Horizontal Grid lines */}
-                    <line x1={paddingX} y1={paddingY} x2={svgWidth - paddingX} y2={paddingY} stroke="rgba(186, 215, 247, 0.07)" strokeDasharray="4 4" />
-                    <line x1={paddingX} y1={paddingY + chartH / 2} x2={svgWidth - paddingX} y2={paddingY + chartH / 2} stroke="rgba(186, 215, 247, 0.07)" strokeDasharray="4 4" />
-                    <line x1={paddingX} y1={paddingY + chartH} x2={svgWidth - paddingX} y2={paddingY + chartH} stroke="rgba(186, 215, 247, 0.12)" />
+                    <line x1={paddingX} y1={paddingY} x2={svgWidth - paddingX} y2={paddingY} stroke="var(--border-color)" strokeDasharray="3 3" opacity="0.6" />
+                    <line x1={paddingX} y1={paddingY + chartH / 2} x2={svgWidth - paddingX} y2={paddingY + chartH / 2} stroke="var(--border-color)" strokeDasharray="3 3" opacity="0.6" />
+                    <line x1={paddingX} y1={paddingY + chartH} x2={svgWidth - paddingX} y2={paddingY + chartH} stroke="var(--border-color)" opacity="0.9" />
 
                     {/* Area under curve */}
-                    <path d={areaPath} fill="url(#neonGradient)" />
+                    <path d={areaPath} fill="url(#singleAccentGrad)" />
 
-                    {/* Benchmark dotted trendline */}
-                    <path d={benchmarkLinePath} fill="none" stroke="rgba(56, 189, 248, 0.5)" strokeWidth="2" strokeDasharray="6 6" />
+                    {/* Benchmark dotted line */}
+                    <path d={benchmarkLinePath} fill="none" stroke="var(--text-secondary)" strokeWidth="1.5" strokeDasharray="4 4" opacity="0.6" />
 
-                    {/* Main Line stroke with glow */}
-                    <path d={mainLinePath} fill="none" stroke="#e05626" strokeWidth="3.5" strokeLinecap="round" filter="url(#glow)" />
+                    {/* Main Line stroke */}
+                    <path d={mainLinePath} fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" />
 
                     {/* Interactive Data Points */}
                     {points.map((pt, idx) => (
-                        <g key={idx} className="cursor-pointer" onMouseEnter={() => setHoveredPoint(pt)} onMouseLeave={() => setHoveredPoint(null)}>
-                            {/* Hover pulse circle */}
+                        <g key={idx} style={{ cursor: "pointer" }} onMouseEnter={() => setHoveredPoint(pt)} onMouseLeave={() => setHoveredPoint(null)}>
                             <circle
                                 cx={pt.x}
                                 cy={pt.y}
-                                r={hoveredPoint?.label === pt.label ? 10 : 5}
-                                fill="var(--color-midnight-canvas, #05060f)"
-                                stroke="#e05626"
-                                strokeWidth={hoveredPoint?.label === pt.label ? "4" : "2.5"}
-                                style={{ transition: "all 0.2s ease" }}
+                                r={hoveredPoint?.label === pt.label ? 7 : 4}
+                                fill="var(--bg-canvas)"
+                                stroke="#2563eb"
+                                strokeWidth="2"
                             />
-                            {/* Data value label on top */}
                             <text
                                 x={pt.x}
-                                y={pt.y - 12}
-                                fill="var(--color-frost-glow, #ffffff)"
+                                y={pt.y - 10}
+                                fill="var(--text-primary)"
                                 fontSize="11"
-                                fontWeight="700"
+                                fontWeight="600"
                                 textAnchor="middle"
                             >
                                 {pt[activeMetric]}
                             </text>
-
-                            {/* X axis month labels */}
                             <text
                                 x={pt.x}
                                 y={svgHeight - 12}
-                                fill={hoveredPoint?.label === pt.label ? "var(--color-frost-glow, #ffffff)" : "var(--color-fog-veil, #9da7ba)"}
+                                fill={hoveredPoint?.label === pt.label ? "var(--text-primary)" : "var(--text-secondary)"}
                                 fontSize="11"
-                                fontWeight={hoveredPoint?.label === pt.label ? "700" : "500"}
+                                fontWeight={hoveredPoint?.label === pt.label ? "600" : "400"}
                                 textAnchor="middle"
                             >
                                 {pt.label}
@@ -246,43 +229,45 @@ export const InteractivePerformanceChart = memo(function InteractivePerformanceC
                     ))}
                 </svg>
 
-                {/* Hover Tooltip Popup */}
+                {/* Tooltip */}
                 {hoveredPoint && (
                     <div
-                        className="position-absolute glass-modal p-2 rounded-3 shadow-lg pointer-events-none transition-all"
+                        className="position-absolute p-2 border text-start"
                         style={{
                             left: `${(hoveredPoint.x / svgWidth) * 100}%`,
-                            top: `${(hoveredPoint.y / svgHeight) * 100 - 30}%`,
+                            top: `${(hoveredPoint.y / svgHeight) * 100 - 25}%`,
                             transform: "translate(-50%, -100%)",
                             zIndex: 10,
-                            minWidth: 140,
-                            border: "1px solid rgba(224, 86, 38, 0.4)",
-                            boxShadow: "0 8px 24px rgba(0,0,0,0.6)"
+                            minWidth: 130,
+                            backgroundColor: "var(--bg-surface)",
+                            borderColor: "var(--border-color)",
+                            borderRadius: "var(--radius)",
+                            pointerEvents: "none"
                         }}
                     >
-                        <div className="text-frost extra-small fw-bold font-display border-bottom border-secondary border-opacity-20 pb-1 mb-1">
-                            {hoveredPoint.label} Details
+                        <div className="small fw-semibold border-bottom pb-1 mb-1" style={{ color: "var(--text-primary)" }}>
+                            {hoveredPoint.label}
                         </div>
-                        <div className="d-flex justify-content-between text-moon extra-small py-0.5">
-                            <span>Score:</span> <strong className="text-skywash">{hoveredPoint.score} / 10</strong>
+                        <div className="d-flex justify-content-between text-secondary small">
+                            <span>Score:</span> <strong style={{ color: "var(--text-primary)" }}>{hoveredPoint.score} / 10</strong>
                         </div>
-                        <div className="d-flex justify-content-between text-moon extra-small py-0.5">
-                            <span>Tasks:</span> <strong className="text-info">{hoveredPoint.tasks} completed</strong>
+                        <div className="d-flex justify-content-between text-secondary small">
+                            <span>Tasks:</span> <strong style={{ color: "var(--accent)" }}>{hoveredPoint.tasks} done</strong>
                         </div>
                     </div>
                 )}
             </div>
 
-            <div className="d-flex align-items-center justify-content-between border-top border-secondary border-opacity-10 pt-2 text-fog extra-small">
+            <div className="d-flex align-items-center justify-content-between border-top border-secondary border-opacity-15 pt-2 text-secondary small">
                 <div className="d-flex align-items-center gap-3">
-                    <span className="d-flex align-items-center gap-1">
-                        <span className="d-inline-block rounded-circle" style={{ width: 8, height: 8, backgroundColor: "#e05626" }}></span> Actual Performance
+                    <span className="d-flex align-items-center gap-1.5">
+                        <span className="d-inline-block" style={{ width: 8, height: 8, backgroundColor: "var(--accent)", borderRadius: "2px" }}></span> Performance
                     </span>
-                    <span className="d-flex align-items-center gap-1">
-                        <span className="d-inline-block rounded-circle" style={{ width: 8, height: 8, backgroundColor: "#38bdf8" }}></span> Cohort Benchmark
+                    <span className="d-flex align-items-center gap-1.5">
+                        <span className="d-inline-block" style={{ width: 8, height: 8, backgroundColor: "var(--text-secondary)", borderRadius: "2px" }}></span> Benchmark
                     </span>
                 </div>
-                <div>Updated today &middot; 100% Verified Ledger</div>
+                <div>Cohort Record &middot; Verified</div>
             </div>
         </Card>
     );
@@ -290,127 +275,182 @@ export const InteractivePerformanceChart = memo(function InteractivePerformanceC
 
 // ---------- Competency & Skills Bar Chart ----------
 export const CompetencyBreakdownChart = memo(function CompetencyBreakdownChart({
-    title = "Competency & Skill Evaluation Breakdown",
+    title = "Competency Distribution",
+    subtitle = "Multi-attribute scoring matrix across key evaluation parameters",
     criteriaList = [
-        { name: "Quality of Work", score: 9.2, target: 8.5, color: "#e05626" },
-        { name: "Technical Execution", score: 8.8, target: 8.0, color: "#06b6d4" },
-        { name: "Communication & Sync", score: 8.4, target: 7.5, color: "#8b5cf6" },
-        { name: "Initiative & Problem Solving", score: 9.0, target: 8.2, color: "#10b981" },
-        { name: "Teamwork & Collaboration", score: 8.6, target: 8.0, color: "#f59e0b" },
-    ]
+        { key: "qualityOfWork", name: "Quality of Work", score: 9.2, target: 8.5 },
+        { key: "technicalExecution", name: "Technical Execution", score: 8.8, target: 8.0 },
+        { key: "communication", name: "Communication & Sync", score: 8.4, target: 7.5 },
+        { key: "initiative", name: "Initiative & Problem Solving", score: 9.0, target: 8.2 },
+        { key: "teamwork", name: "Teamwork & Collaboration", score: 8.6, target: 8.0 },
+    ],
+    editable = false,
+    onCriteriaChange,
+    onSave,
+    saving = false,
+    saved = false,
+    onPreset,
+    overallScore
 }) {
+    const avgScore = overallScore !== undefined
+        ? overallScore
+        : (criteriaList.reduce((acc, c) => acc + (Number(c.score) || 0), 0) / (criteriaList.length || 1));
+
     return (
-        <Card className="p-4 mb-4">
-            <div className="d-flex align-items-center justify-content-between mb-4">
-                <div>
-                    <h5 className="font-display text-skywash m-0 fs-5">
-                        <i className="bi bi-bar-chart-line me-2 text-warning"></i> {title}
+        <Card className="p-4 mb-4 text-start">
+            <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                <div className="text-start">
+                    <h5 className="font-display m-0 fs-5 d-flex align-items-center gap-2" style={{ color: "var(--text-primary)" }}>
+                        <i className="ph ph-chart-bar text-primary"></i> {title}
                     </h5>
-                    <div className="text-fog small">Multi-attribute scoring matrix across key evaluation parameters</div>
+                    <div className="text-secondary small">{subtitle}</div>
                 </div>
+                {editable && (
+                    <div className="d-flex align-items-center gap-2">
+                        <span className="text-secondary small">Overall:</span>
+                        <span className="badge px-2.5 py-1 fw-bold fs-6" style={{ backgroundColor: "var(--accent)", color: "var(--accent-fg)", borderRadius: "var(--radius)" }}>
+                            {Number(avgScore).toFixed(1)} / 10
+                        </span>
+                    </div>
+                )}
             </div>
 
             <div className="d-flex flex-column gap-3">
                 {criteriaList.map((item) => {
-                    const pct = (item.score / 10) * 100;
+                    const currentScore = Number(item.score) || 0;
+                    const pct = Math.max(0, Math.min(100, (currentScore / 10) * 100));
                     return (
-                        <div key={item.name} className="p-3 rounded-3" style={{ background: "rgba(186, 214, 247, 0.03)", border: "1px solid rgba(186, 215, 247, 0.08)" }}>
+                        <div key={item.key || item.name} className="p-3" style={{ background: "var(--bg-surface-elevated)", border: "1px solid var(--border-color)", borderRadius: "var(--radius)" }}>
                             <div className="d-flex align-items-center justify-content-between mb-2">
-                                <span className="font-display text-frost fw-medium small">{item.name}</span>
+                                <span className="font-display fw-medium small" style={{ color: "var(--text-primary)" }}>{item.name}</span>
                                 <div className="d-flex align-items-center gap-2">
-                                    <span className="badge rounded-pill px-2 py-1 extra-small" style={{ background: "rgba(199, 211, 234, 0.1)", color: "#c7d3ea" }}>
+                                    <span className="badge px-2 py-0.5 text-secondary" style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius)", fontSize: "11px" }}>
                                         Target: {item.target}
                                     </span>
-                                    <span className="fw-bold text-skywash fs-6">{item.score.toFixed(1)} <span className="text-fog extra-small font-normal">/ 10</span></span>
+                                    <span className="fw-bold fs-6" style={{ color: "var(--text-primary)" }}>
+                                        {currentScore.toFixed(1)} <span className="text-secondary small fw-normal">/ 10</span>
+                                    </span>
                                 </div>
                             </div>
 
-                            {/* Animated Dual Bar Track */}
-                            <div className="position-relative w-100 rounded-pill overflow-hidden" style={{ height: 10, background: "rgba(199,211,234,0.08)" }}>
+                            {/* Crisp Bar Track */}
+                            <div className="position-relative w-100 overflow-hidden" style={{ height: 8, background: "var(--bg-subtle)", borderRadius: "var(--radius)" }}>
                                 <div
-                                    className="h-100 rounded-pill transition-all"
+                                    className="h-100"
                                     style={{
                                         width: `${pct}%`,
-                                        background: `linear-gradient(90deg, ${item.color} 0%, #e05626 100%)`,
-                                        boxShadow: `0 0 10px ${item.color}aa`
+                                        background: "var(--accent)",
+                                        borderRadius: "var(--radius)"
                                     }}
                                 ></div>
                             </div>
+
+                            {/* Interactive Slider */}
+                            {editable && (
+                                <div className="mt-3 pt-2 d-flex align-items-center gap-3">
+                                    <span className="text-secondary small" style={{ width: 28, fontSize: "11px" }}>1.0</span>
+                                    <input
+                                        type="range"
+                                        className="form-range flex-grow-1"
+                                        min="1"
+                                        max="10"
+                                        step="0.1"
+                                        value={currentScore}
+                                        onChange={(e) => onCriteriaChange && onCriteriaChange(item.key || item.name, parseFloat(e.target.value))}
+                                        style={{ accentColor: "var(--accent)" }}
+                                    />
+                                    <span className="text-secondary small" style={{ width: 34, fontSize: "11px" }}>10.0</span>
+                                </div>
+                            )}
                         </div>
                     );
                 })}
             </div>
-        </Card>
-    );
-});
 
-// ---------- Circular SVG Progress Ring Gauge ----------
-export const CircularProgressRing = memo(function CircularProgressRing({
-    percentage = 94,
-    size = 140,
-    strokeWidth = 12,
-    label = "Task Completion Rate",
-    subtext = "Target >= 85%"
-}) {
-    const radius = (size - strokeWidth) / 2;
-    const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - (percentage / 100) * circumference;
+            {/* Bottom Controls */}
+            {editable && (
+                <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-3 mt-3 border-top border-secondary border-opacity-15">
+                    <div className="d-flex flex-wrap align-items-center gap-2">
+                        <span className="text-secondary small font-monospace" style={{ fontSize: "11px" }}>Presets:</span>
+                        <button
+                            type="button"
+                            className="btn btn-sm btn-secondary-flat py-1 px-2 small"
+                            onClick={() => onPreset && onPreset(9.2)}
+                        >
+                            High (9.2)
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-sm btn-secondary-flat py-1 px-2 small"
+                            onClick={() => onPreset && onPreset(8.2)}
+                        >
+                            Standard (8.2)
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-sm btn-secondary-flat py-1 px-2 small"
+                            onClick={() => onPreset && onPreset(7.0)}
+                        >
+                            Developing (7.0)
+                        </button>
+                    </div>
 
-    return (
-        <Card className="p-4 mb-4 text-center d-flex flex-column align-items-center justify-content-center">
-            <div className="text-fog small font-eyebrow mb-2">{label}</div>
-            
-            <div className="position-relative d-inline-flex align-items-center justify-content-center my-2" style={{ width: size, height: size }}>
-                <svg width={size} height={size} className="transform -rotate-90">
-                    <circle
-                        cx={size / 2}
-                        cy={size / 2}
-                        r={radius}
-                        stroke="rgba(199, 211, 234, 0.08)"
-                        strokeWidth={strokeWidth}
-                        fill="transparent"
-                    />
-                    <circle
-                        cx={size / 2}
-                        cy={size / 2}
-                        r={radius}
-                        stroke="#e05626"
-                        strokeWidth={strokeWidth}
-                        strokeDasharray={circumference}
-                        strokeDashoffset={strokeDashoffset}
-                        strokeLinecap="round"
-                        fill="transparent"
-                        style={{
-                            transition: "stroke-dashoffset 0.8s ease-in-out",
-                            filter: "drop-shadow(0 0 8px rgba(224, 86, 38, 0.5))"
-                        }}
-                    />
-                </svg>
-                <div className="position-absolute text-center">
-                    <div className="fs-3 fw-bold text-skywash leading-none">{percentage}%</div>
-                    <div className="text-fog extra-small">Punctual</div>
+                    {onSave && (
+                        <button
+                            type="button"
+                            className={`btn ${saved ? "btn-success" : "btn-primary-accent"} d-flex align-items-center gap-2 px-3 py-1.5`}
+                            onClick={onSave}
+                            disabled={saving}
+                        >
+                            {saved ? (
+                                <>
+                                    <i className="ph ph-check-circle fs-6"></i>
+                                    <span>Saved to Database</span>
+                                </>
+                            ) : saving ? (
+                                <>
+                                    <span className="spinner-border spinner-border-sm" role="status"></span>
+                                    <span>Saving...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <i className="ph ph-floppy-disk fs-6"></i>
+                                    <span>Save Performance Evaluation</span>
+                                </>
+                            )}
+                        </button>
+                    )}
                 </div>
-            </div>
-
-            <div className="text-moon extra-small mt-2">{subtext}</div>
+            )}
         </Card>
     );
 });
 
-// ---------- Enhanced StatCard with Sparkline ----------
-export const EnhancedStatCard = memo(function EnhancedStatCard({ label, value, trend = "+5.4%", trendUp = true, icon = "bi-speedometer2" }) {
+// ---------- Enhanced StatCard with Clean Metrics ----------
+export const EnhancedStatCard = memo(function EnhancedStatCard({ label, value, trend = "+5.4%", trendUp = true, icon = "ph-gauge" }) {
+    const phIcon = icon.startsWith("ph-") ? icon : icon.replace("bi-", "ph-");
+
     return (
-        <Card className="p-3 h-100 text-start d-flex flex-column justify-content-between position-relative overflow-hidden" style={{ border: "1px solid rgba(186, 215, 247, 0.14)" }}>
+        <Card className="p-3 h-100 text-start d-flex flex-column justify-content-between position-relative">
             <div className="d-flex align-items-center justify-content-between mb-2">
-                <span className="text-fog small font-medium">{label}</span>
-                <span className={`badge rounded-pill px-2 py-1 extra-small ${trendUp ? "bg-success-subtle text-success border border-success-subtle" : "bg-danger-subtle text-danger border border-danger-subtle"}`}>
-                    <i className={`bi ${trendUp ? "bi-arrow-up-right" : "bi-arrow-down-right"} me-1`}></i> {trend}
+                <span className="text-secondary small fw-medium">{label}</span>
+                <span
+                    className="badge px-2 py-0.5"
+                    style={{
+                        backgroundColor: trendUp ? "rgba(16, 185, 129, 0.12)" : "rgba(239, 68, 68, 0.12)",
+                        color: trendUp ? "#10b981" : "#ef4444",
+                        border: `1px solid ${trendUp ? "rgba(16, 185, 129, 0.25)" : "rgba(239, 68, 68, 0.25)"}`,
+                        fontSize: "11px",
+                        borderRadius: "var(--radius)"
+                    }}
+                >
+                    <i className={`ph ${trendUp ? "ph-arrow-up-right" : "ph-arrow-down-right"} me-0.5`}></i> {trend}
                 </span>
             </div>
 
             <div className="d-flex align-items-baseline justify-content-between mt-1">
-                <div className="fs-2 fw-bold text-skywash font-display">{value}</div>
-                <i className={`bi ${icon} fs-3 text-secondary opacity-50`}></i>
+                <div className="fs-2 fw-bold font-display" style={{ color: "var(--text-primary)" }}>{value}</div>
+                <i className={`ph ${phIcon} fs-3 text-secondary opacity-50`}></i>
             </div>
         </Card>
     );

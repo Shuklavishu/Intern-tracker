@@ -1,8 +1,6 @@
 // Initial baseline configuration for Intern Management System
 
-export const DEMO_USERS = {
-    admin: { role: "admin", name: "Admin User", email: "admin@gmail.com" },
-};
+
 
 export const SEED_INTERNS = [];
 

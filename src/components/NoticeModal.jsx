@@ -32,10 +32,10 @@ export default function NoticeModal({
 
     return (
         <div className="modal-glass-backdrop">
-            <div className="modal-glass-content p-4">
-                <div className="d-flex align-items-center justify-content-between mb-4 border-bottom border-secondary border-opacity-10 pb-3">
-                    <h4 className="font-display text-skywash m-0">Issue Notice / Broadcast</h4>
-                    <button type="button" className="btn btn-sm text-fog fs-5 p-0 border-0" onClick={onClose}>&times;</button>
+            <div className="modal-glass-content p-4 text-start">
+                <div className="d-flex align-items-center justify-content-between mb-4 border-bottom border-secondary border-opacity-15 pb-3">
+                    <h4 className="font-display fs-5 m-0" style={{ color: "var(--text-primary)" }}>Issue Notice / Broadcast</h4>
+                    <button type="button" className="btn btn-sm text-secondary fs-5 p-0 border-0" onClick={onClose}>&times;</button>
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-3">
@@ -48,21 +48,17 @@ export default function NoticeModal({
                         />
                     </div>
                     <div className="mb-4">
-                        <label className="form-label text-moon small fw-medium mb-1">Target Audience</label>
+                        <label className="form-label text-secondary small fw-medium mb-1">Target Audience</label>
                         <select
-                            className="form-select glass-input py-2 px-3 text-frost"
+                            className="form-select glass-input py-2 px-3 small"
                             value={audience}
                             onChange={(e) => setAudience(e.target.value)}
                         >
                             {allowAllDepartments && (
-                                <option value="All Departments" style={{ background: "#05060f", color: "#c7d3ea" }}>
-                                    All Departments
-                                </option>
+                                <option value="All Departments">All Departments</option>
                             )}
                             {departments.map((d) => (
-                                <option key={d.id} value={d.name} style={{ background: "#05060f", color: "#c7d3ea" }}>
-                                    {d.name}
-                                </option>
+                                <option key={d.id} value={d.name}>{d.name}</option>
                             ))}
                         </select>
                     </div>

@@ -1,6 +1,7 @@
 // Frontend API Service Layer connecting to Express & MongoDB Backend
 
-const rawUrl = (import.meta.env.VITE_API_URL || "/api").trim().replace(/\/+$/, "");
+const isLocal = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+const rawUrl = (import.meta.env.VITE_API_URL || (isLocal ? "http://localhost:5000/api" : "/api")).trim().replace(/\/+$/, "");
 const BASE_URL = rawUrl.endsWith("/api") ? rawUrl : `${rawUrl}/api`;
 
 class ApiService {
@@ -44,6 +45,17 @@ class ApiService {
             } catch {
                 // response wasn't json
             }
+            if (response.status === 401 && !endpoint.includes("/auth/login")) {
+                this.clearToken();
+                try {
+                    localStorage.removeItem("ims_user");
+                } catch {
+                    // ignore
+                }
+                if (typeof window !== "undefined" && window.location.pathname !== "/login" && window.location.pathname !== "/") {
+                    window.location.href = "/login";
+                }
+            }
             throw new Error(errMsg);
         }
 
@@ -75,6 +87,14 @@ class ApiService {
         }
     }
 
+    // Admin only staff registration (mentors and other admins)
+    async registerStaff(staffData) {
+        return await this.request("/auth/register-staff", {
+            method: "POST",
+            body: JSON.stringify(staffData),
+        });
+    }
+
     // --- Interns ---
     async getInterns() {
         return await this.request("/interns");
@@ -94,9 +114,47 @@ class ApiService {
         });
     }
 
+    async updateInternDates(id, { startDate, endDate }) {
+        return await this.request(`/interns/${id}/dates`, {
+            method: "PATCH",
+            body: JSON.stringify({ startDate, endDate }),
+        });
+    }
+
     async deleteIntern(id) {
         return await this.request(`/interns/${id}`, {
             method: "DELETE",
+        });
+    }
+
+    async updateInternStatus(id, status) {
+        return await this.request(`/interns/${id}/status`, {
+            method: "PATCH",
+            body: JSON.stringify({ status }),
+        });
+    }
+
+    // --- Leaves ---
+    async getLeaves() {
+        return await this.request("/leaves");
+    }
+
+    async createLeave(leaveData) {
+        return await this.request("/leaves", {
+            method: "POST",
+            body: JSON.stringify(leaveData),
+        });
+    }
+
+    async approveLeave(id) {
+        return await this.request(`/leaves/${id}/approve`, {
+            method: "PATCH",
+        });
+    }
+
+    async denyLeave(id) {
+        return await this.request(`/leaves/${id}/deny`, {
+            method: "PATCH",
         });
     }
 
@@ -132,10 +190,24 @@ class ApiService {
     }
 
     async updateTaskStatus(id, status) {
-        // Backend accepts both PUT (legacy) and PATCH
+        if (status === "Approved") return this.approveTask(id);
+        if (status === "Rejected") return this.rejectTask(id);
         return await this.request(`/tasks/${id}/status`, {
-            method: "PUT",
+            method: "PATCH",
             body: JSON.stringify({ status }),
+        });
+    }
+
+    async approveTask(id) {
+        return await this.request(`/tasks/${id}/approve`, {
+            method: "PATCH",
+        });
+    }
+
+    async rejectTask(id, reason = "") {
+        return await this.request(`/tasks/${id}/reject`, {
+            method: "PATCH",
+            body: JSON.stringify({ reason, rejectionReason: reason }),
         });
     }
 
@@ -156,7 +228,11 @@ class ApiService {
         return await this.request("/goals");
     }
 
-    // Mentor/Admin only — intern field and setBy validated server-side
+    async getMyGoals() {
+        return await this.request("/goals/mine");
+    }
+
+    // Mentor only — intern field and setBy validated server-side
     async createGoal(goalData) {
         return await this.request("/goals", {
             method: "POST",
@@ -169,6 +245,14 @@ class ApiService {
         return await this.request(`/goals/${id}/status`, {
             method: "PATCH",
             body: JSON.stringify({ status }),
+        });
+    }
+
+    // Mentor/Admin — extend goal due date
+    async extendGoalDueDate(id, due) {
+        return await this.request(`/goals/${id}/due-date`, {
+            method: "PATCH",
+            body: JSON.stringify({ due }),
         });
     }
 
@@ -205,6 +289,29 @@ class ApiService {
         return await this.request(`/requests/${id}/status`, {
             method: "PUT",
             body: JSON.stringify({ status }),
+        });
+    }
+
+    // --- Notifications ---
+    async getNotifications() {
+        return await this.request("/notifications");
+    }
+
+    async markNotificationRead(id) {
+        return await this.request(`/notifications/${id}/read`, {
+            method: "PATCH",
+        });
+    }
+
+    async markAllNotificationsRead() {
+        return await this.request("/notifications/read-all", {
+            method: "PATCH",
+        });
+    }
+
+    async deleteNotification(id) {
+        return await this.request(`/notifications/${id}`, {
+            method: "DELETE",
         });
     }
 }

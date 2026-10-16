@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+export { internshipInfo } from "./internshipInfo";
 
 // Responsive viewport detection hook
 export function useViewport() {
@@ -12,8 +13,8 @@ export function useViewport() {
 
     return {
         width: w,
-        isMobile: w < 640,
-        isTablet: w >= 640 && w < 1024,
+        isMobile: w < 768,
+        isTablet: w >= 768 && w < 1024,
     };
 }
 
@@ -79,6 +80,41 @@ export const calculateCohortDataPoints = (interns = []) => {
             score: avgScore,
             benchmark: avgBenchmark,
             tasks: totalTasks
+        };
+    });
+};
+
+// Email format regular expression and validation helper
+export const EMAIL_REGEX = /^[^\s@]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*(?<!\.(?:com|org|net|edu|gov))\.(?!comcom|netnet|orgorg|educom)(?:com|org|net|edu|gov|in|io|co|me|[A-Za-z]{2,6})$/i;
+export const isValidEmail = (email) => EMAIL_REGEX.test(String(email || "").trim());
+
+// Person name format regular expression (letters, spaces, dots, hyphens, apostrophes; 2-50 chars)
+export const NAME_REGEX = /^[a-zA-Z\s.'-]{2,50}$/;
+export const isValidName = (name) => NAME_REGEX.test(String(name || "").trim());
+
+// Competency evaluation parameters matching performance matrix
+export const DEFAULT_COMPETENCIES = [
+    { key: "qualityOfWork", name: "Quality of Work", defaultScore: 8.5, target: 8.5, color: "#e05626" },
+    { key: "technicalExecution", name: "Technical Execution", defaultScore: 8.0, target: 8.0, color: "#06b6d4" },
+    { key: "communication", name: "Communication & Sync", defaultScore: 7.5, target: 7.5, color: "#8b5cf6" },
+    { key: "initiative", name: "Initiative & Problem Solving", defaultScore: 8.2, target: 8.2, color: "#10b981" },
+    { key: "teamwork", name: "Teamwork & Collaboration", defaultScore: 8.0, target: 8.0, color: "#f59e0b" }
+];
+
+export const formatCompetenciesList = (competencies = {}, baseScore = 8.5) => {
+    return DEFAULT_COMPETENCIES.map((comp) => {
+        let score = comp.defaultScore;
+        if (competencies && typeof competencies[comp.key] === "number") {
+            score = competencies[comp.key];
+        } else if (typeof baseScore === "number") {
+            score = Math.max(1, Math.min(10, baseScore));
+        }
+        return {
+            key: comp.key,
+            name: comp.name,
+            score: Number(Number(score).toFixed(1)),
+            target: comp.target,
+            color: comp.color
         };
     });
 };
